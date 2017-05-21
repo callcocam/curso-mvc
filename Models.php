@@ -35,34 +35,89 @@ class Models extends Services\Conn\Conn {
     }
 
     public function findBy(string $Where, string $Parses, $Limit = NULL, $Offset = NULL) {
-        $this->Parses = $Parses;
-        
-        $this->Sql = "SELECT * FROM {$this->Tabela} {$Where}";
-       
-        $this->getSintax();
         if ($Limit):
-            $this->stmt->bindValue(":limit", $Limit);
+            $Where .= " limit:limit";
+            $Parses .= " limit={$Limit}";
         endif;
         if ($Offset):
-            $this->stmt->bindValue(":offset", $Offset);
+            $Where .= " offset:offset";
+            $Parses .= " offset={$Offset}";
         endif;
+
+        $this->Parses = $Parses;
+
+        $this->Sql = "SELECT * FROM {$this->Tabela} {$Where}";
+
+        $this->getSintax();
+
         $this->stmt->execute();
 
         $this->Result = $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
-    
+
     public function findOneBy(string $Where, string $Parses) {
         $this->Parses = $Parses;
-       
+
         $this->Sql = "SELECT * FROM {$this->Tabela} {$Where}";
-        
+
         $this->getSintax();
-       
+
         $this->stmt->execute();
 
         $this->Result = $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
-    
-    
+
+    public function create($Data) {
+        $Inputs = implode(" ,", array_keys($Data));
+
+        $Parses = sprintf(":%s", implode(" , :", array_keys($Data)));
+
+        $this->Sql = "INSERT INTO {$this->Tabela} ({$Inputs}) VALUES ({$Parses})";
+
+        try {
+            $this->stmt = $this->Connect->prepare($this->Sql);
+            $this->stmt->execute();
+            $this->Result = $this->Connect->lastInsertId();
+        } catch (\PDOException $exc) {
+            throw Utils::dump([$exc->getCode(), $exc->getMessage()]);
+        }
+    }
+
+    public function update(array $Data, string $Where, string $Parses) {
+        parse_str($Parses, $this->Parses);
+
+        foreach ($Data as $key => $value):
+            $Places[] = sprintf("%s =: %s", $key, $key);
+            $Data[$key] = (empty($value) ? NULL : $value);
+        endforeach;
+
+        $Place = implode(" ,", $Places);
+
+        $this->Sql = "UPDATE {$this->Tabela} SET {$Place} {$Where}";
+
+        try {
+            $this->stmt = $this->Connect->prepare($this->Sql);
+            $this->stmt->execute(array_merge($Data, $Place));
+            $this->Result = TRUE;
+        } catch (\PDOException $exc) {
+            $this->Result = FALSE;
+            throw Utils::dump([$exc->getCode(), $exc->getMessage()]);
+        }
+    }
+
+    public function delete(string $Where, string $Parses) {
+        parse_str($Parses, $this->Parses);
+
+        $this->Sql = "DELETE FROM {$this->Tabela} {$Where}";
+
+        try {
+            $this->stmt = $this->Connect->prepare($this->Sql);
+            $this->stmt->execute($this->Parses);
+            $this->Result = TRUE;
+        } catch (\PDOException $exc) {
+            $this->Result = FALSE;
+            throw Utils::dump([$exc->getCode(), $exc->getMessage()]);
+        }
+    }
 
 }
