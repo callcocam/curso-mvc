@@ -49,7 +49,7 @@ class App {
         if (!file_exists(sprintf("%s/%s", ROOT_PATH, $controllerFile))):
            // require_once sprintf("%s/%s", ROOT_PATH, $controllerNotFoundFile);
             $controller = sprintf("%s%s", $namespace, $this->controller_notFound);
-       // else:
+        else:
            // require_once sprintf("%s/%s", ROOT_PATH, $controllerFile);
         endif;
         $appController = (new Services\Container())->resolveClass($controller);

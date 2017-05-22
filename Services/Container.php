@@ -11,7 +11,7 @@ class Container {
 
     private $dependecies_inject;
 
-    public function resoveFunction($fn, $dependecies_inject = []) {
+    public function resolveFunction($fn, $dependecies_inject = []) {
         if ($dependecies_inject !== []):
             $this->dependecies_inject = $dependecies_inject;
         endif;

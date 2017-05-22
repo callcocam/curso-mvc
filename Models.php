@@ -11,10 +11,10 @@ class Models extends Services\Conn\Conn {
 
     protected $id = "id";
     protected $Tabela;
-
+    protected $join=null;
     public function findAll() {
         $this->Sql = "SELECT * FROM {$this->Tabela}";
-
+        
         $this->stmt = $this->Connect->prepare($this->Sql);
 
         $this->stmt->execute();
@@ -76,7 +76,7 @@ class Models extends Services\Conn\Conn {
 
         try {
             $this->stmt = $this->Connect->prepare($this->Sql);
-            $this->stmt->execute();
+            $this->stmt->execute($Data);
             $this->Result = $this->Connect->lastInsertId();
         } catch (\PDOException $exc) {
             throw Utils::dump([$exc->getCode(), $exc->getMessage()]);
@@ -87,17 +87,17 @@ class Models extends Services\Conn\Conn {
         parse_str($Parses, $this->Parses);
 
         foreach ($Data as $key => $value):
-            $Places[] = sprintf("%s =: %s", $key, $key);
+            $Places[] = sprintf("%s =:%s", $key, $key);
             $Data[$key] = (empty($value) ? NULL : $value);
         endforeach;
 
         $Place = implode(" ,", $Places);
 
-        $this->Sql = "UPDATE {$this->Tabela} SET {$Place} {$Where}";
+        $this->Sql = "UPDATE {$this->Tabela} SET {$Place} WHERE {$Where}";
 
         try {
             $this->stmt = $this->Connect->prepare($this->Sql);
-            $this->stmt->execute(array_merge($Data, $Place));
+            $this->stmt->execute(array_merge($Data, $this->Parses));
             $this->Result = TRUE;
         } catch (\PDOException $exc) {
             $this->Result = FALSE;
@@ -108,7 +108,7 @@ class Models extends Services\Conn\Conn {
     public function delete(string $Where, string $Parses) {
         parse_str($Parses, $this->Parses);
 
-        $this->Sql = "DELETE FROM {$this->Tabela} {$Where}";
+        $this->Sql = "DELETE FROM {$this->Tabela} WHERE {$Where}";
 
         try {
             $this->stmt = $this->Connect->prepare($this->Sql);
