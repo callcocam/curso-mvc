@@ -14,17 +14,13 @@ class Controller {
     protected $response;
     protected $view;
 
-    public function __construct(Config $config) {
-        
+    public function __construct() {
         $this->response = new Http\Response;
-        if ($config):
-            $this->setConfigs($config);
-        endif;
     }
 
     public function setConfigs($config) {
         $this->config = $config;
-        $this->request = new Http\Request($config->baseURI, $config->controller_dir, $config->controller_notFound);
+        $this->request = new Http\Request($config->getConfig('baseURI'), $config->getConfig('controller_dir'), $config->getConfig('controller_notFound'));
     }
 
     /*
@@ -32,7 +28,7 @@ class Controller {
      */
 
     public function indexAction() {
-         $this->getView()->render();
+        $this->getView()->render();
     }
 
     public function __get(string $param) {
@@ -56,6 +52,7 @@ class Controller {
         endif;
         return $this->response->redirectTo($URL);
     }
+
     public function getView() {
         return $this->view;
     }
@@ -64,6 +61,5 @@ class Controller {
         $this->view = $view;
         return $this;
     }
-
 
 }

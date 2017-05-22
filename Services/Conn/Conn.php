@@ -32,15 +32,15 @@ class Conn {
     protected $Parses;
 
     public function __construct(\SIGA\Config $config) {
-        $this->Host = $config->Host;
-        $this->User = $config->User;
-        $this->Pass = $config->Pass;
-        $this->Base = $config->Base;
-        if (isset($config->Dsn)):
-            $this->Dsn = $config->Dsn;
+        $this->Host = $config->getConfig('Host');
+        $this->User = $config->getConfig('User');
+        $this->Pass = $config->getConfig('Pass');
+        $this->Base = $config->getConfig('Base');
+        if (!is_array($config->getConfig('Dsn'))):
+            $this->Dsn = $config->getConfig('Dsn');
         endif;
-        if (isset($config->Option)):
-            $this->Options = $config->Options;
+        if (!is_array($config->getConfig('Option'))):
+            $this->Options = $config->getConfig('Options');
         endif;
         $this->Connectar();
     }

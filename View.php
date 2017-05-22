@@ -17,10 +17,10 @@ class View {
     protected $layout= "layout";
     protected $vars;
 
-    public function __construct($configs, $subfolder, $controller, $action) {
+    public function __construct($config,$subfolder, $controller, $action) {
         $this->view = new \stdClass;
-        $this->configs = $configs;
         $this->subfolder = $subfolder;
+        $this->configs = $config;
         $this->action = str_replace("Action","", $action);
         $this->controller = strtolower(str_replace([
             "App", "Controllers", "Controller", $subfolder, "\\"

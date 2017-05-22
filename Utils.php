@@ -9,6 +9,10 @@ namespace SIGA;
  */
 class Utils {
 
+    public static function getClass($class,$dependecies=[]){
+        return (new Services\Container())->resolveClass($class,$dependecies);
+    }
+
     public static function dump($dados, bool $dump = true) {
         echo '<pre>';
         ($dump) ? var_dump($dados) : print_r($dados);

@@ -9,20 +9,20 @@ namespace SIGA;
  */
 class App {
 
-    protected $configs;
+    protected $config;
     protected $controller_dir;
     protected $controller_notFound = 'NotFoundController';
     protected $request;
     protected $response;
 
-    public function __construct(Config $config) {
+    public function __construct(Config $configs) {
         $this->controller_dir = str_replace("/", DS, sprintf("%s/%s/Controllers", APP_PATH, "%s"));
-        $this->configs = $config;
+        $this->config = $configs;
 
-        $this->configs->controller_dir = $this->controller_dir;
-        $this->configs->controller_notFound = $this->controller_notFound;
+        $this->config->configs['controller_dir'] = $this->controller_dir;
+        $this->config->configs['controller_notFound'] = $this->controller_notFound;
 
-        $this->request = new Http\Request($this->configs->baseURI, $this->controller_dir, $this->controller_notFound);
+        $this->request = new Http\Request($this->config->configs['baseURI'], $this->controller_dir, $this->controller_notFound);
 
         $this->response = new Http\Response;
     }
@@ -45,14 +45,14 @@ class App {
 
         $controllerFile = sprintf("%s.php", $controller);
 
-        $controllerNotFoundFile = str_replace($this->request->getController(), $this->controller_notFound, $controllerFile);
+       // $controllerNotFoundFile = str_replace($this->request->getController(), $this->controller_notFound, $controllerFile);
         if (!file_exists(sprintf("%s/%s", ROOT_PATH, $controllerFile))):
-            require_once sprintf("%s/%s", ROOT_PATH, $controllerNotFoundFile);
+           // require_once sprintf("%s/%s", ROOT_PATH, $controllerNotFoundFile);
             $controller = sprintf("%s%s", $namespace, $this->controller_notFound);
-        else:
-            require_once sprintf("%s/%s", ROOT_PATH, $controllerFile);
+       // else:
+           // require_once sprintf("%s/%s", ROOT_PATH, $controllerFile);
         endif;
-        $appController = new $controller($this->configs);
+        $appController = (new Services\Container())->resolveClass($controller);
 
         // verifica se  e existe a functio com o nome da action
 
@@ -60,9 +60,9 @@ class App {
             throw new \Exception("O method <{$action}> não foi encontrado no controller {$controller}");
         endif;
 
-        $appController->setConfigs($this->configs);
+        $appController->setConfigs($this->config);
 
-        $appController->setView(new View($this->configs, $this->request->getSubFolder(), $this->request->getController(), $action));
+        $appController->setView(new View($this->config, $this->request->getSubFolder(), $this->request->getController(), $action));
 
         call_user_func_array([&$appController, $action], $this->request->params);
     }
