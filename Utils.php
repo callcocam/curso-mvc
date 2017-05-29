@@ -9,8 +9,29 @@ namespace SIGA;
  */
 class Utils {
 
-    public static function getClass($class,$dependecies=[]){
-        return (new Services\Container())->resolveClass($class,$dependecies);
+    public static function getClass($class, $dependecies = []) {
+        return (new Services\Container())->resolveClass($class, $dependecies);
+    }
+
+    public static function directory($dir) {
+        return str_replace("/", DS, $dir);
+    }
+
+    public static function strpos_array($haystack, $needles) {
+        if (is_array($needles)) {
+            foreach ($needles as $str) {
+                if (is_array($str)) {
+                    $pos = strpos_array($haystack, $str);
+                } else {
+                    $pos = strpos($haystack, $str);
+                }
+                if ($pos !== FALSE) {
+                    return $pos;
+                }
+            }
+        } else {
+            return strpos($haystack, $needles);
+        }
     }
 
     public static function dump($dados, bool $dump = true) {
@@ -19,12 +40,12 @@ class Utils {
         echo '</pre>';
     }
 
-    public static function getName(string $name){
-        $find=[
+    public static function getName(string $name) {
+        $find = [
             '-',
             '_'
         ];
-        $sub=[
+        $sub = [
             ' ',
             ' '
         ];

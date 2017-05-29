@@ -47,15 +47,10 @@ class App {
 
        // $controllerNotFoundFile = str_replace($this->request->getController(), $this->controller_notFound, $controllerFile);
         if (!file_exists(sprintf("%s/%s", ROOT_PATH, $controllerFile))):
-           // require_once sprintf("%s/%s", ROOT_PATH, $controllerNotFoundFile);
-            $controller = sprintf("%s%s", $namespace, $this->controller_notFound);
-        else:
-           // require_once sprintf("%s/%s", ROOT_PATH, $controllerFile);
+             $controller = sprintf("%s%s", $namespace, $this->controller_notFound);
         endif;
         $appController = (new Services\Container())->resolveClass($controller);
-
         // verifica se  e existe a functio com o nome da action
-
         if (!method_exists($appController, $action)):
             throw new \Exception("O method <{$action}> não foi encontrado no controller {$controller}");
         endif;

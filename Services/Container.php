@@ -34,7 +34,7 @@ class Container {
             $class = new \ReflectionClass($class);
         endif;
         if (!$class->isInstantiable()):
-            throw new Exception("{$class->name} is not instanciable");
+            throw new \Exception("{$class->name} is not instanciable");
         endif;
 
         $constructor = $class->getConstructor();
@@ -82,7 +82,7 @@ class Container {
             return $parameter->getDefaultValue();
         endif;
 
-        throw new Exception("Cannot resolve unknow!");
+        throw \SIGA\Utils::dump(new \Exception("Cannot resolve unknow!"));
     }
 
 }

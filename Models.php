@@ -12,6 +12,7 @@ class Models extends Services\Conn\Conn {
     protected $id = "id";
     protected $Tabela;
     protected $join=null;
+    protected $Fields;
     public function findAll() {
         $this->Sql = "SELECT * FROM {$this->Tabela}";
         
@@ -120,4 +121,7 @@ class Models extends Services\Conn\Conn {
         }
     }
 
+    public function getFields() {
+        return $this->Fields;
+    }
 }

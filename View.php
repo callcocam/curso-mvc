@@ -11,17 +11,24 @@ class View {
 
     private $action;
     protected $configs;
+
+    /**
+     * $view
+     * @var Services\Container
+     */
     protected $view;
     protected $subfolder;
     protected $controller;
-    protected $layout= "layout";
+    protected $layout = "layout";
     protected $vars;
+    protected $html;
 
-    public function __construct($config,$subfolder, $controller, $action) {
-        $this->view = new \stdClass;
+    public function __construct($config, $subfolder, $controller, $action) {
+        $this->view = new Services\Container();
+        $this->html = $this->view->resolveClass('App\Base\Helpers\Views\Tags\Html');
         $this->subfolder = $subfolder;
         $this->configs = $config;
-        $this->action = str_replace("Action","", $action);
+        $this->action = str_replace("Action", "", $action);
         $this->controller = strtolower(str_replace([
             "App", "Controllers", "Controller", $subfolder, "\\"
                         ], '', $controller));
@@ -29,7 +36,6 @@ class View {
             $this->subfolder = "Base";
             $this->action = "404";
         endif;
-       
     }
 
     public function render() {
@@ -69,6 +75,10 @@ class View {
     public function setVars($vars) {
         $this->vars = $vars;
         return $this;
+    }
+
+    protected function getView($class = "App\Base\Helpers\Views\Render", $dependecies_inject = []) {
+        return $this->view->resolveClass($class, $dependecies_inject);
     }
 
 }
