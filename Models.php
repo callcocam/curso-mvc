@@ -9,12 +9,12 @@ namespace SIGA;
  */
 class Models extends Services\Conn\Conn {
 
-    protected $id = "id";
+    protected $Id = "id";
     protected $Tabela;
-    protected $join=null;
-    protected $Fields;
+    protected $Join=null;
+    protected $Fields = "*";
     public function findAll() {
-        $this->Sql = "SELECT * FROM {$this->Tabela}";
+        $this->Sql = "SELECT {$this->Fields} FROM {$this->Tabela}";
         
         $this->stmt = $this->Connect->prepare($this->Sql);
 
@@ -24,7 +24,7 @@ class Models extends Services\Conn\Conn {
     }
 
     public function find($DataId) {
-        $this->Sql = "SELECT * FROM {$this->Tabela} WHERE {$this->id}=:id";
+        $this->Sql = "SELECT {$this->Fields} FROM {$this->Tabela} WHERE {$this->id}=:id";
 
         $this->stmt = $this->Connect->prepare($this->Sql);
 
@@ -47,7 +47,7 @@ class Models extends Services\Conn\Conn {
 
         $this->Parses = $Parses;
 
-        $this->Sql = "SELECT * FROM {$this->Tabela} {$Where}";
+        $this->Sql = "SELECT {$this->Fields} FROM {$this->Tabela} {$Where}";
 
         $this->getSintax();
 
@@ -59,7 +59,7 @@ class Models extends Services\Conn\Conn {
     public function findOneBy(string $Where, string $Parses) {
         $this->Parses = $Parses;
 
-        $this->Sql = "SELECT * FROM {$this->Tabela} {$Where}";
+        $this->Sql = "SELECT {$this->Fields} FROM {$this->Tabela} {$Where}";
 
         $this->getSintax();
 
@@ -122,6 +122,8 @@ class Models extends Services\Conn\Conn {
     }
 
     public function getFields() {
-        return $this->Fields;
+        return explode(",", $this->Fields);
     }
+
+
 }

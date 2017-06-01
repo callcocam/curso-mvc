@@ -25,7 +25,7 @@ class View {
 
     public function __construct($config, $subfolder, $controller, $action) {
         $this->view = new Services\Container();
-        $this->html = $this->view->resolveClass('App\Base\Helpers\Views\Tags\Html');
+        $this->html = $this->view->resolveClass('SIGA\Tags\Html');
         $this->subfolder = $subfolder;
         $this->configs = $config;
         $this->action = str_replace("Action", "", $action);
@@ -73,12 +73,35 @@ class View {
     }
 
     public function setVars($vars) {
+        if (is_array($vars)):
+            foreach ($vars as $key => $value):
+                $this->$key = $value;
+            endforeach;
+        endif;
         $this->vars = $vars;
         return $this;
     }
 
-    protected function getView($class = "App\Base\Helpers\Views\Render", $dependecies_inject = []) {
+    protected function getView($class = "SIGA\Views\Render", $dependecies_inject = []) {
         return $this->view->resolveClass($class, $dependecies_inject);
+    }
+
+    public function formRow(array $data): string {
+        $input = $data['type'];
+        $value= isset($data['attrs']['value'])?$data['attrs']['value']:NULL;
+        return $this->html->$input($data['name'],$value)->attributes(
+                        $data['attrs']
+                );
+    }
+    
+     public function formSelect(array $data): string {
+        $input = $data['type'];
+        $value= isset($data['attrs']['value'])?$data['attrs']['value']:NULL;
+        return $this->html->$input($data['name'],$value)->attributes(
+                        $data['attrs']
+                )->options(
+                        $data['options']
+        );
     }
 
 }
